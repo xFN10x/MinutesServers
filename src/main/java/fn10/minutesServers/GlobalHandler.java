@@ -1,19 +1,14 @@
 package fn10.minutesServers;
 
 import java.io.IOException;
-import java.net.http.HttpRequest;
+import java.time.Instant;
 
 import org.springframework.boot.web.servlet.error.ErrorController;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -44,5 +39,11 @@ public class GlobalHandler implements ErrorController {
     @CrossOrigin
     public @ResponseBody PingStatus ping() {
         return new PingStatus("Before oil runs out...");
+    }
+
+    @GetMapping("/now")
+    @CrossOrigin
+    public @ResponseBody long now() {
+        return Instant.now().toEpochMilli();
     }
 }

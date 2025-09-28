@@ -6,12 +6,13 @@ import java.time.Instant;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
 public class TMUser {
 
-    private @Id @GeneratedValue Long id;
+    private @Id @GeneratedValue(strategy=GenerationType.IDENTITY) Long id;
     private Instant CreationDate;
 
     private String Username;
@@ -26,6 +27,7 @@ public class TMUser {
     }
 
     @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     public Long getId() {
         return this.id;
     }
@@ -46,7 +48,7 @@ public class TMUser {
         return this.Password;
     }
 
-    public void setCreation(Date val) {
+    public void setCreation(Instant val) {
         this.CreationDate = val;
     }
 

@@ -1,14 +1,16 @@
 package fn10.minutesServers;
 
-import java.net.PasswordAuthentication;
+import java.time.Instant;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import fn10.minutesServers.auth.KeyDistrobuter;
 import fn10.minutesServers.auth.TMUser;
 import fn10.minutesServers.auth.UserRepository;
 
@@ -36,16 +38,34 @@ public class AuthHandler {
         public String Username;
         public String Password;
         public long Time;
-        public String key;
+        public String Key;
+    }
+
+    @GetMapping("/issue")
+    public @ResponseBody fn10.minutesServers.auth.Key getNewKey() {
+        return KeyDistrobuter.issueNew();
     }
 
     @PostMapping("/signup")
     public @ResponseBody LoginInfo createUser(@RequestBody LoginRequest req) {
+        if (!KeyDistrobuter.isActive(req.Key)) {
+            return new LoginInfo("Key expired");
+        }
+        for (TMUser propuser : userRepo.findAll()) {
+            if (propuser.getUsername().equals(req.Username)) {
+                return new LoginInfo("User already exists");
+            }
+        }
 
+        userRepo.save(new TMUser(Instant.now(), req.Username, req.Password));
+        return new LoginInfo("User created.");
     }
 
     @PostMapping("/login")
     public @ResponseBody LoginInfo login(@RequestBody LoginRequest req) {
+        if (!KeyDistrobuter.isActive(req.Key)) {
+            return new LoginInfo("Key expired");
+        }
         TMUser user = null;
         for (TMUser propuser : userRepo.findAll()) {
             if (propuser.getUsername().equals(req.Username)) {
