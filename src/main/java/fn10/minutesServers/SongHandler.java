@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,7 @@ import fn10.minutesServers.songs.SpecialSong;
 
 @RestController
 @RequestMapping("/twenty/songs/")
+@CrossOrigin
 public class SongHandler {
 
     private static final String[] songs = new String[] {
@@ -29,7 +31,8 @@ public class SongHandler {
     };
 
     private static final SpecialSong[] specialSongs = new SpecialSong[] {
-            new SpecialSong(SongType.title, "20_Minutes")
+            new SpecialSong(SongType.title, "20_Minutes"),
+            new SpecialSong(SongType.crunch, "Oil_Drips"),
     };
 
     @GetMapping("/songList")
@@ -43,7 +46,7 @@ public class SongHandler {
     }
 
     @GetMapping(value = "/downloadSong/{quality}/{songName}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public @ResponseBody byte[] downloadSong(@PathVariable String songName, @PathVariable String quality) throws IOException, URISyntaxException {
+    public @ResponseBody byte[] downloadSong(@PathVariable("songName") String songName, @PathVariable("quality") String quality) throws IOException, URISyntaxException {
         URL proposed = getClass().getResource("/static/songs/" + quality + "/" + songName + ".mp3");
         
         if (proposed == null) {
